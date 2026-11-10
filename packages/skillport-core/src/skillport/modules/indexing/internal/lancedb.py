@@ -19,7 +19,7 @@ from .state import IndexStateStore
 class IndexStore:
     """LanceDB-backed index store."""
 
-    schema_version = "fts-v2"
+    schema_version = "fts-v3"
 
     def __init__(self, config: Config):
         self.config = config
@@ -246,6 +246,10 @@ class IndexStore:
             d["tags_text"] = (
                 " ".join(d["tags"]) if isinstance(d.get("tags"), list) else str(d.get("tags", ""))
             )
+            # Native FTS indexes one column, so the searchable fields are joined into one.
+            d["search_text"] = " ".join(
+                str(d.get(k) or "") for k in ("id", "name", "description", "tags_text", "category")
+            )
             if not vectors_present:
                 d.pop("vector", None)
             data.append(d)
@@ -256,11 +260,7 @@ class IndexStore:
         tbl = self.db.create_table(self.table_name, data=data, mode="overwrite")
 
         try:
-            tbl.create_fts_index(
-                ["id", "name", "description", "tags_text", "category"],
-                replace=True,
-                use_tantivy=True,
-            )
+            tbl.create_fts_index("search_text", replace=True)
         except Exception as exc:
             print(f"FTS index creation failed: {exc}", file=sys.stderr)
 

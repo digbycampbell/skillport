@@ -216,7 +216,7 @@ Same skill repository, different views per client.
 
 ### Full-Text Search (Default)
 
-SkillPort uses BM25-based full-text search via Tantivy as the default:
+SkillPort uses BM25-based full-text search via LanceDB's native FTS index as the default:
 
 - **No API keys required** — works out of the box
 - **Privacy-preserving** — no data sent to external services

@@ -94,7 +94,7 @@ Vector search is optional. By default, SkillPort uses full-text search only.
 
 #### Full-Text Search
 
-SkillPort uses BM25-based full-text search via Tantivy:
+SkillPort uses BM25-based full-text search via LanceDB's native FTS index:
 
 - **Fast** — no external API calls
 - **Private** — all data stays local
